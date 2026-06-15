@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            color: #333;
+            padding: 20px;
+        }
+
+        .pokedex {
+            width: min(520px, 100%);
+            background: linear-gradient(135deg, #d62828 0%, #ff4b4b 100%);
+            border: 1px solid rgba(255,255,255,0.24);
+            border-radius: 28px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            color: #fff;
+        }
+
+        .pokedex-header {
+            padding: 28px 28px 18px;
+            background: rgba(255,255,255,0.08);
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .pokedex-header h1 {
+            font-size: 2.5rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-bar input {
+            flex: 1;
+            min-width: 180px;
+            border: none;
+            border-radius: 16px;
+            padding: 16px 18px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.16);
+            color: #fff;
+            outline: none;
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(255,255,255,0.72);
+        }
+
+        .search-bar button {
+            border: none;
+            border-radius: 16px;
+            padding: 16px 22px;
+            background: linear-gradient(135deg, #ffcc00 0%, #ff7a18 100%);
+            color: #1f1f1f;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .search-bar button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 20px rgba(255, 122, 24, 0.35);
+        }
+
+        .card {
+            padding: 28px;
+            display: grid;
+            gap: 18px;
+        }
+
+        .poki-image {
+            display: flex;
+            justify-content: center;
+            background: rgba(3, 3, 3, 0.08);
+            border-radius: 24px;
+            padding: 24px;
+        }
+
+        .poki-image img {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+            image-rendering: pixelated;
+        }
+
+        .info-group {
+            display: grid;
+            gap: 12px;
+        }
+
+        .info-group h4,
+        .info-group h5 {
+            padding: 14px 18px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.14);
+        }
+
+        .info-group h4 {
+            text-transform: capitalize;
+            font-size: 1.5rem;
+        }
+
+        .details-row {
+            display: grid;
+            gap: 12px;
+        }
+
+        @media (min-width: 520px) {
+            .details-row {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="pokedex">
+        <div class="pokedex-header">
+            <h1>Pokedex</h1>
+            <div class="search-bar">
+                <input placeholder="Enter Pokemon Name" id="pokiName" />
+                <button onclick="pokidata()">Search</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="poki-image">
+                <img src="" id="pokiImg" alt="Pokemon" />
+            </div>
+            <div class="info-group">
+                <h4 id="pokiNameDisplay">Search a Pokemon</h4>
+                <h5 id="HP">HP: -</h5>
+                <h5 id="pokiHeight">Height: -</h5>
+                <h5 id="pokiWeight">Weight: -</h5>
+            </div>
+            <div class="details-row">
+                <h5 id="pokiType">Type: -</h5>
+                <h5 id="pokiAbility">Ability: -</h5>
+                <h5 id="pokiMove">Move: -</h5>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function pokidata(params){
+            try{
+                const name = document.getElementById('pokiName').value.trim().toLowerCase()
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+                if(!res.ok){
+                    throw new Error('data fetch is failed')
+                }
+                const data = await res.json()
+                console.log(data)
+                const pokisprites = data.sprites.front_default
+
+                const img = document.getElementById('pokiImg')
+                const nameEl = document.getElementById('pokiNameDisplay')
+                img.src=pokisprites
+                nameEl.innerText=data.name
+                document.getElementById('pokiHeight').innerText = `Height: ${data.height*100} cm`
+                document.getElementById('pokiWeight').innerText = `Weight: ${data.weight/10} kg`
+                document.getElementById('pokiType').innerText = `Type: ${data.types[0].type.name}`
+                document.getElementById('pokiAbility').innerText = `Ability: ${data.abilities[0].ability.name}`
+                document.getElementById('pokiMove').innerText = `Move: ${data.moves[0].move.name}`
+                document.getElementById('HP').innerText = `HP: ${data.stats[0].base_stat}`
+            }
+            catch(err){
+                console.error(err)
+            }
+
+        }
+    </script>
+</body>
+</html>
