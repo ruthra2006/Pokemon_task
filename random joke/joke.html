@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joke</title>
+</head>
+<body>
+    <div id="jokeContainer"></div>
+    <script>
+        try {
+            const fetchJoke = async () => {
+                const response = await fetch('https://official-joke-api.appspot.com/jokes/ten');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const joke = await response.json();
+                
+                const jokes=document.getElementById('jokeContainer');
+                joke.forEach(joke=>{
+                    const jokeDiv=document.createElement('div')
+                    jokeDiv.innerHTML=`<h2>${joke.setup}</h2><p>${joke.punchline}</p>`
+                    document.getElementById('jokeContainer').appendChild(jokeDiv)
+                })
+            };
+            fetchJoke();
+        } catch (error) {
+            console.error(error);
+        }
+    </script>
+</body>
+</html>
